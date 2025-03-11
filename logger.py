@@ -73,7 +73,7 @@ class NavMetricsLogger(Node):
     def write_log_file(self, log_data):
         """ Writes the collected trial data to a log file. """
         trial_number = self.get_next_trial_number()
-        timestamp = datetime.now().strftime("%m-%d-%y_%I-%M%p").replace("AMPM", "PM")  # ✅ Fix incorrect AM/PM issue
+        timestamp = datetime.now().strftime("%m-%d-%y_%I-%M%p").replace("AMPM", "PM")
         filename = f"trial{trial_number}_{timestamp}.log"
         filepath = os.path.join(LOG_FOLDER, filename)
 
@@ -134,7 +134,7 @@ class NavMetricsLogger(Node):
         def monitor():
             while self.monitoring_active:
                 self.record_cpu_usage()
-                time.sleep(0.5)  # Sample every 0.5 seconds
+                time.sleep(0.5)  # Sample CPU data every 0.5 seconds
 
         self.cpu_thread = threading.Thread(target=monitor)
         self.cpu_thread.start()
@@ -147,13 +147,13 @@ class NavMetricsLogger(Node):
     def record_cpu_usage(self):
         """ Continuously samples CPU usage while trial is active. """
     
-        total_cpu = psutil.cpu_percent(interval=0.1)  # Normalize across cores
+        total_cpu = psutil.cpu_percent(interval=0.1)
         process_cpu = self.process.cpu_percent(interval=0.1)
         cpu_usage_adjusted = max(0, total_cpu - process_cpu)  # Deduct script's CPU usage
 
         ram_usage = psutil.virtual_memory().percent
         swap_usage = psutil.swap_memory().percent
-        system_load = os.getloadavg()  # System load average (1, 5, 15 min)
+        system_load = os.getloadavg()
 
         timestamp = time.time() - self.start_time if self.start_time is not None else 0.0
 
